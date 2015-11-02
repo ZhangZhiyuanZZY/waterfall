@@ -65,10 +65,6 @@ static const NSUInteger ZYDefaultColumnCount = 3;
 
 }
 
-
-
-
-
 ///重置每一列的最大y坐标
 ///后面的cell的frame是根据前面的cell计算的所以, 就在本方法中一次性把所有cell的frame都计算出来
 - (void)prepareLayout
@@ -115,7 +111,6 @@ static const NSUInteger ZYDefaultColumnCount = 3;
     //返回数组
     return array;
 }
-
 
 ///说明indexpath位置cell的布局属性
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath

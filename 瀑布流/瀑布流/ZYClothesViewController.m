@@ -8,30 +8,46 @@
 
 #import "ZYClothesViewController.h"
 #import "ZYWaterfallFlowLayout.h"
+#import "ZYClothesCell.h"
+#import <MJExtension.h>
+#import "ZYClothes.h"
 @interface ZYClothesViewController ()
-
+///衣服模型数组
+@property(nonatomic, strong)NSMutableArray *clothesArray;
 @end
 
 @implementation ZYClothesViewController
 
-static NSString * const reuseIdentifier = @"ClothesCell";
+- (NSMutableArray *)clothesArray
+{
+    if (!_clothesArray) {
+        _clothesArray = [[NSMutableArray alloc]init];
+    }
+    return _clothesArray;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    [self.collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:reuseIdentifier];
-    self.collectionView.collectionViewLayout = [[ZYWaterfallFlowLayout alloc]init];
-   
+/// 切换布局
+     self.collectionView.collectionViewLayout = [[ZYWaterfallFlowLayout alloc]init];
+    ///字典转模型
+    NSArray *temArray = [ZYClothes objectArrayWithFilename:@"clothes.plist"];
+#warning 数组和数组直接不能直接赋值吗
+//    self.clothesArray = temArray; 不能这样直接复制
+    [self.clothesArray addObjectsFromArray:temArray];
 }
 
 #pragma mark <UICollectionViewDataSource>
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return 30;
+    return self.clothesArray.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
+    ZYClothesCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ClothesCell" forIndexPath:indexPath];
+    
+    cell.clothes = self.clothesArray[indexPath.item];
+    
     cell.backgroundColor = [UIColor redColor];
     
     
