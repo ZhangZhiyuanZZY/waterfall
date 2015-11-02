@@ -11,7 +11,7 @@
 #import "ZYClothesCell.h"
 #import <MJExtension.h>
 #import "ZYClothes.h"
-@interface ZYClothesViewController ()
+@interface ZYClothesViewController ()<ZYWaterfallFlowLayoutDelegate>
 ///衣服模型数组
 @property(nonatomic, strong)NSMutableArray *clothesArray;
 @end
@@ -28,14 +28,29 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-/// 切换布局
-     self.collectionView.collectionViewLayout = [[ZYWaterfallFlowLayout alloc]init];
+
+    // 切换布局
+    ZYWaterfallFlowLayout *layout = [[ZYWaterfallFlowLayout alloc] init];
+    layout.delegate = self;
+    self.collectionView.collectionViewLayout = layout;
+    
     ///字典转模型
     NSArray *temArray = [ZYClothes objectArrayWithFilename:@"clothes.plist"];
 #warning 数组和数组直接不能直接赋值吗
 //    self.clothesArray = temArray; 不能这样直接复制
     [self.clothesArray addObjectsFromArray:temArray];
 }
+
+#pragma mark <HMWaterfallFlowLayoutDelegate>
+- (CGFloat)waterfallFlowLayout:(ZYWaterfallFlowLayout *)layout heightForItemAtIndexPath:(NSIndexPath *)indexPath withItemWidth:(CGFloat)width {
+    ZYClothes *clothes = self.clothesArray[indexPath.item];
+    return clothes.h * width / clothes.w;
+}
+
+- (NSUInteger)columnCountInWaterfallFlowLayout:(ZYWaterfallFlowLayout *)layout {
+    return 4;
+}
+
 
 #pragma mark <UICollectionViewDataSource>
 

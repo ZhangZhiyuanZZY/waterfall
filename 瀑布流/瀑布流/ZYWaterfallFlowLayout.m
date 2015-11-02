@@ -134,8 +134,7 @@ static const NSUInteger ZYDefaultColumnCount = 3;
     //列边距
     CGFloat totalColumnSpacing = (ZYDefaultColumnCount - 1) * ZYDefaultColumnSpacing;
     CGFloat width = (ZYCollectionViewWidth - ZYDefaultEdgeInsets.left - ZYDefaultEdgeInsets.right - totalColumnSpacing) / ZYDefaultColumnCount;
-#warning TODO
-    CGFloat height = 50 + arc4random_uniform(150);
+    CGFloat height = [self.delegate waterfallFlowLayout:self heightForItemAtIndexPath:indexPath withItemWidth:width];
     CGFloat x = ZYDefaultEdgeInsets.left + destColumnIndex * (width + ZYDefaultColumnSpacing);
     CGFloat y = destColumnMaxY + ZYDefaultRowSpacing;
     attrs.frame = CGRectMake(x, y, width, height);
@@ -145,5 +144,35 @@ static const NSUInteger ZYDefaultColumnCount = 3;
     return attrs;
 
 }
+#pragma mark - 处理代理数据
+- (CGFloat)rowSpacing {
+    if ([self.delegate respondsToSelector:@selector(rowSpacingInWaterfallFlowLayout:)]) {
+        return [self.delegate rowSpacingInWaterfallFlowLayout:self];
+    }
+    return ZYDefaultRowSpacing;
+}
+
+- (CGFloat)columnSpacing {
+    if ([self.delegate respondsToSelector:@selector(columnSpacingInWaterfallFlowLayout:)]) {
+        return [self.delegate columnSpacingInWaterfallFlowLayout:self];
+    }
+    return ZYDefaultColumnSpacing;
+}
+
+- (UIEdgeInsets)edgeInsets {
+    if ([self.delegate respondsToSelector:@selector(edgeInsetsInWaterfallFlowLayout:)]) {
+        return [self.delegate edgeInsetsInWaterfallFlowLayout:self];
+    }
+    return ZYDefaultEdgeInsets;
+}
+
+- (NSUInteger)columnCount {
+    if ([self.delegate respondsToSelector:@selector(columnCountInWaterfallFlowLayout:)]) {
+        return [self.delegate columnCountInWaterfallFlowLayout:self];
+    }
+    return ZYDefaultColumnCount;
+}
+
+
 
 @end
