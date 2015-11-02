@@ -11,6 +11,7 @@
 #import "ZYClothesCell.h"
 #import <MJExtension.h>
 #import "ZYClothes.h"
+#import <MJRefresh.h>
 @interface ZYClothesViewController ()<ZYWaterfallFlowLayoutDelegate>
 ///衣服模型数组
 @property(nonatomic, strong)NSMutableArray *clothesArray;
@@ -33,12 +34,28 @@
     ZYWaterfallFlowLayout *layout = [[ZYWaterfallFlowLayout alloc] init];
     layout.delegate = self;
     self.collectionView.collectionViewLayout = layout;
+    self.collectionView.backgroundColor = [UIColor whiteColor];
+    __weak typeof(self) weakSelf = self;
+    // 刷新数据
+    self.collectionView.header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        // 加载数据
+        NSArray *tempArray = [ZYClothes objectArrayWithFilename:@"clothes.plist"];
+        [weakSelf.clothesArray insertObjects:tempArray atIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, tempArray.count)]];
+        [weakSelf.collectionView reloadData];
+        
+        // 结束刷新
+        [weakSelf.collectionView.header endRefreshing];
+    }];
     
-    ///字典转模型
-    NSArray *temArray = [ZYClothes objectArrayWithFilename:@"clothes.plist"];
-#warning 数组和数组直接不能直接赋值吗
-//    self.clothesArray = temArray; 不能这样直接复制
-    [self.clothesArray addObjectsFromArray:temArray];
+    self.collectionView.footer = [MJRefreshAutoNormalFooter footerWithRefreshingBlock:^{
+        // 加载数据
+        NSArray *tempArray = [ZYClothes objectArrayWithFilename:@"clothes.plist"];
+        [weakSelf.clothesArray addObjectsFromArray:tempArray];
+        [weakSelf.collectionView reloadData];
+        
+        // 结束刷新
+        [weakSelf.collectionView.footer endRefreshing];
+    }];
 }
 
 #pragma mark <HMWaterfallFlowLayoutDelegate>
@@ -48,7 +65,7 @@
 }
 
 - (NSUInteger)columnCountInWaterfallFlowLayout:(ZYWaterfallFlowLayout *)layout {
-    return 4;
+    return 3;
 }
 
 
